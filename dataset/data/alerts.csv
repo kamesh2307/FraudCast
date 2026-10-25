@@ -1,0 +1,67 @@
+alert_id,case_id,recipient_type,recipient_id,priority,alert_reason,draft_content,edited_content,approval_status,approved_by,approved_at,acknowledgement_status,acknowledgement_timestamp,action_status,escalation_deadline,created_at
+SYN-ALT-001,SYN-CASE-0005,ATM operations,SYN-TEAM-ATMOPS-CENTRAL,Critical,Forecast indicates elevated cash-out likelihood within the indicative window,"[SYNTHETIC DEMO] Case SYN-CASE-0005 | Priority: Critical
+Evidence: Phishing reported 2026-10-22T11:11:00+05:30; funds moved across 6 accounts.
+Amount exposed: INR 5,40,000.
+Indicative forecast: elevated cash-out likelihood in Pune Hex 06 (SYN-ZONE-06).
+Requested review: please review cash-out activity in the zone per approved SOP.
+This alert is an indicative forecast. Any account or enforcement action requires separate human authorization.",,Approved,DEMO-USER-ANALYST-03,2026-10-22T11:55:00+05:30,Pending,NaT,None,2026-10-22T12:10:00+05:30,2026-10-22T11:51:00+05:30
+SYN-ALT-002,SYN-CASE-0011,ATM operations,SYN-TEAM-ATMOPS-CENTRAL,High,Forecast indicates elevated cash-out likelihood within the indicative window,"[SYNTHETIC DEMO] Case SYN-CASE-0011 | Priority: High
+Evidence: Impersonation reported 2026-10-22T08:19:00+05:30; funds moved across 6 accounts.
+Amount exposed: INR 4,80,000.
+Indicative forecast: elevated cash-out likelihood in Pune Hex 04 (SYN-ZONE-04).
+Requested review: please review cash-out activity in the zone per approved SOP.
+This alert is an indicative forecast. Any account or enforcement action requires separate human authorization.",,Approved,DEMO-USER-ANALYST-03,2026-10-22T11:20:00+05:30,Overdue,NaT,None,2026-10-22T11:35:00+05:30,2026-10-22T11:16:00+05:30
+SYN-ALT-003,SYN-CASE-0012,ATM operations,SYN-TEAM-ATMOPS-EAST,High,Forecast indicates elevated cash-out likelihood within the indicative window,"[SYNTHETIC DEMO] Case SYN-CASE-0012 | Priority: High
+Evidence: Phishing reported 2026-10-22T10:11:00+05:30; funds moved across 6 accounts.
+Amount exposed: INR 3,30,000.
+Indicative forecast: elevated cash-out likelihood in Pune Hex 22 (SYN-ZONE-22).
+Requested review: please review cash-out activity in the zone per approved SOP.
+This alert is an indicative forecast. Any account or enforcement action requires separate human authorization.",,Approved,DEMO-USER-ANALYST-01,2026-10-22T10:26:00+05:30,Acknowledged,2026-10-22T10:31:00+05:30,Review started,2026-10-22T10:41:00+05:30,2026-10-22T10:22:00+05:30
+SYN-ALT-004,SYN-CASE-0013,ATM operations,SYN-TEAM-ATMOPS-EAST,Low,Forecast indicates elevated cash-out likelihood within the indicative window,"[SYNTHETIC DEMO] Case SYN-CASE-0013 | Priority: Low
+Evidence: UPI fraud reported 2026-10-20T16:55:00+05:30; funds moved across 4 accounts.
+Amount exposed: INR 4,50,000.
+Indicative forecast: elevated cash-out likelihood in Pune Hex 22 (SYN-ZONE-22).
+Requested review: please review cash-out activity in the zone per approved SOP.
+This alert is an indicative forecast. Any account or enforcement action requires separate human authorization.",,Approved,DEMO-USER-ANALYST-02,2026-10-20T17:07:00+05:30,Acknowledged,2026-10-20T17:11:00+05:30,Action recorded,2026-10-20T17:22:00+05:30,2026-10-20T17:03:00+05:30
+SYN-ALT-005,SYN-CASE-0014,ATM operations,SYN-TEAM-ATMOPS-CENTRAL,Low,Forecast indicates elevated cash-out likelihood within the indicative window,"[SYNTHETIC DEMO] Case SYN-CASE-0014 | Priority: Low
+Evidence: Investment scam reported 2026-10-17T09:51:00+05:30; funds moved across 5 accounts.
+Amount exposed: INR 3,80,000.
+Indicative forecast: elevated cash-out likelihood in Pune Hex 02 (SYN-ZONE-02).
+Requested review: please review cash-out activity in the zone per approved SOP.
+This alert is an indicative forecast. Any account or enforcement action requires separate human authorization.",,Approved,DEMO-USER-ANALYST-03,2026-10-17T10:08:00+05:30,Acknowledged,2026-10-17T10:12:00+05:30,Action recorded,2026-10-17T10:23:00+05:30,2026-10-17T10:04:00+05:30
+SYN-ALT-006,SYN-CASE-0015,ATM operations,SYN-TEAM-ATMOPS-SOUTH,Low,Forecast indicates elevated cash-out likelihood within the indicative window,"[SYNTHETIC DEMO] Case SYN-CASE-0015 | Priority: Low
+Evidence: Impersonation reported 2026-10-13T13:09:00+05:30; funds moved across 4 accounts.
+Amount exposed: INR 2,90,000.
+Indicative forecast: elevated cash-out likelihood in Pune Hex 09 (SYN-ZONE-09).
+Requested review: please review cash-out activity in the zone per approved SOP.
+This alert is an indicative forecast. Any account or enforcement action requires separate human authorization.",,Approved,DEMO-USER-ANALYST-01,2026-10-13T13:33:00+05:30,Acknowledged,2026-10-13T13:44:00+05:30,Action recorded,2026-10-13T13:48:00+05:30,2026-10-13T13:29:00+05:30
+SYN-ALT-007,SYN-CASE-0016,ATM operations,SYN-TEAM-ATMOPS-CENTRAL,Low,Forecast indicates elevated cash-out likelihood within the indicative window,"[SYNTHETIC DEMO] Case SYN-CASE-0016 | Priority: Low
+Evidence: Card-not-present reported 2026-10-02T20:39:00+05:30; funds moved across 5 accounts.
+Amount exposed: INR 3,50,000.
+Indicative forecast: elevated cash-out likelihood in Pune Hex 06 (SYN-ZONE-06).
+Requested review: please review cash-out activity in the zone per approved SOP.
+This alert is an indicative forecast. Any account or enforcement action requires separate human authorization.",,Approved,DEMO-USER-ANALYST-02,2026-10-02T21:03:00+05:30,Acknowledged,2026-10-02T21:06:00+05:30,Action recorded,2026-10-02T21:18:00+05:30,2026-10-02T20:59:00+05:30
+SYN-ALT-008,SYN-CASE-0017,ATM operations,SYN-TEAM-ATMOPS-CENTRAL,Low,Forecast indicates elevated cash-out likelihood within the indicative window,"[SYNTHETIC DEMO] Case SYN-CASE-0017 | Priority: Low
+Evidence: Investment scam reported 2026-10-06T12:46:00+05:30; funds moved across 6 accounts.
+Amount exposed: INR 0.
+Indicative forecast: elevated cash-out likelihood in Pune Hex 04 (SYN-ZONE-04).
+Requested review: please review cash-out activity in the zone per approved SOP.
+This alert is an indicative forecast. Any account or enforcement action requires separate human authorization.",,Approved,DEMO-USER-ANALYST-03,2026-10-06T13:04:00+05:30,Acknowledged,2026-10-06T13:16:00+05:30,Action recorded,2026-10-06T13:19:00+05:30,2026-10-06T13:00:00+05:30
+SYN-ALT-009,SYN-CASE-0018,ATM operations,SYN-TEAM-ATMOPS-EAST,Low,Forecast indicates elevated cash-out likelihood within the indicative window,"[SYNTHETIC DEMO] Case SYN-CASE-0018 | Priority: Low
+Evidence: Phishing reported 2026-10-10T19:37:00+05:30; funds moved across 6 accounts.
+Amount exposed: INR 2,70,000.
+Indicative forecast: elevated cash-out likelihood in Pune Hex 22 (SYN-ZONE-22).
+Requested review: please review cash-out activity in the zone per approved SOP.
+This alert is an indicative forecast. Any account or enforcement action requires separate human authorization.",,Approved,DEMO-USER-ANALYST-01,2026-10-10T19:49:00+05:30,Acknowledged,2026-10-10T20:01:00+05:30,Action recorded,2026-10-10T20:04:00+05:30,2026-10-10T19:45:00+05:30
+SYN-ALT-010,SYN-CASE-0019,ATM operations,SYN-TEAM-ATMOPS-CENTRAL,Low,Forecast indicates elevated cash-out likelihood within the indicative window,"[SYNTHETIC DEMO] Case SYN-CASE-0019 | Priority: Low
+Evidence: Investment scam reported 2026-10-19T09:21:00+05:30; funds moved across 4 accounts.
+Amount exposed: INR 4,00,000.
+Indicative forecast: elevated cash-out likelihood in Pune Hex 02 (SYN-ZONE-02).
+Requested review: please review cash-out activity in the zone per approved SOP.
+This alert is an indicative forecast. Any account or enforcement action requires separate human authorization.",,Approved,DEMO-USER-ANALYST-02,2026-10-19T09:41:00+05:30,Acknowledged,2026-10-19T09:46:00+05:30,Action recorded,2026-10-19T09:56:00+05:30,2026-10-19T09:37:00+05:30
+SYN-ALT-011,SYN-CASE-0020,ATM operations,SYN-TEAM-ATMOPS-SOUTH,Low,Forecast indicates elevated cash-out likelihood within the indicative window,"[SYNTHETIC DEMO] Case SYN-CASE-0020 | Priority: Low
+Evidence: UPI fraud reported 2026-10-04T11:46:00+05:30; funds moved across 5 accounts.
+Amount exposed: INR 3,20,000.
+Indicative forecast: elevated cash-out likelihood in Pune Hex 09 (SYN-ZONE-09).
+Requested review: please review cash-out activity in the zone per approved SOP.
+This alert is an indicative forecast. Any account or enforcement action requires separate human authorization.",,Approved,DEMO-USER-ANALYST-03,2026-10-04T11:59:00+05:30,Acknowledged,2026-10-04T12:04:00+05:30,Action recorded,2026-10-04T12:14:00+05:30,2026-10-04T11:55:00+05:30

@@ -1,0 +1,9 @@
+outcome_id,case_id,actual_cashout_zone,actual_cashout_timestamp,forecast_rank,forecast_correct_top_one,forecast_correct_top_three,original_amount_at_risk,amount_protected,amount_withdrawn,amount_unresolved,intervention_result,analyst_override,override_reason,analyst_feedback,alert_usefulness,case_status,closed_at
+SYN-OUT-001,SYN-CASE-0013,SYN-ZONE-22,2026-10-20T17:45:00+05:30,,,,450000,450000.0,0.0,0.0,Funds protected,False,,,5,Closed,2026-10-21T23:45:00+05:30
+SYN-OUT-002,SYN-CASE-0014,SYN-ZONE-02,2026-10-17T11:10:00+05:30,,,,380000,131100.0,171000.0,77900.0,Partially protected,False,,,3,Closed,2026-10-18T13:10:00+05:30
+SYN-OUT-003,SYN-CASE-0015,SYN-ZONE-09,2026-10-13T14:16:00+05:30,,,,290000,0.0,246500.0,43500.0,Not protected,False,,,2,Closed,2026-10-14T18:16:00+05:30
+SYN-OUT-004,SYN-CASE-0016,SYN-ZONE-08,2026-10-02T21:13:00+05:30,,,,350000,110300.0,210000.0,29700.0,Partially protected,False,,,3,Closed,2026-10-03T20:13:00+05:30
+SYN-OUT-005,SYN-CASE-0017,SYN-ZONE-04,2026-10-06T10:46:00+05:30,,,,210000,0.0,210000.0,0.0,Not protected,False,,,1,Closed,2026-10-07T17:46:00+05:30
+SYN-OUT-006,SYN-CASE-0018,SYN-ZONE-05,2026-10-10T20:12:00+05:30,,,,270000,270000.0,0.0,0.0,Funds protected,False,,,5,Closed,2026-10-11T05:12:00+05:30
+SYN-OUT-007,SYN-CASE-0019,SYN-ZONE-02,2026-10-19T10:15:00+05:30,,,,400000,139800.0,180000.0,80200.0,Partially protected,False,,,3,Closed,2026-10-20T13:15:00+05:30
+SYN-OUT-008,SYN-CASE-0020,SYN-ZONE-21,2026-10-04T12:50:00+05:30,,,,320000,256000.0,64000.0,0.0,Partially protected,True,Analyst prioritised an alternative zone after a synthetic branch callback reported an ATM outage in the top-ranked zone.,,3,Closed,2026-10-05T06:50:00+05:30

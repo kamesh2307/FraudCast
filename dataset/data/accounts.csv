@@ -1,0 +1,59 @@
+account_id,bank_code,account_type,account_age_band,home_branch_zone,previous_synthetic_alert_count,previous_confirmed_synthetic_link_count,normal_activity_band,recent_activity_band,current_balance,review_status,role_hint
+SYN-ACC-0001,SYN-BANK-C,Current,Over 180 days,SYN-ZONE-06,0,0,Medium,Medium,174500.0,None,victim
+SYN-ACC-0002,SYN-BANK-D,Savings,Over 180 days,SYN-ZONE-18,0,0,Low,Medium,41100.0,None,victim
+SYN-ACC-0003,SYN-BANK-B,Savings,Over 180 days,SYN-ZONE-18,0,0,Medium,Medium,183100.0,None,victim
+SYN-ACC-0004,SYN-BANK-B,Savings,Over 180 days,SYN-ZONE-14,0,0,Low,Medium,106300.0,None,victim
+SYN-ACC-0005,SYN-BANK-A,Savings,Over 180 days,SYN-ZONE-12,0,0,High,Medium,89900.0,None,victim
+SYN-ACC-0006,SYN-BANK-A,Current,Over 180 days,SYN-ZONE-12,0,0,Medium,Medium,292700.0,None,victim
+SYN-ACC-0007,SYN-BANK-B,Savings,Over 180 days,SYN-ZONE-08,0,0,Low,Medium,266800.0,None,victim
+SYN-ACC-0008,SYN-BANK-A,Current,Over 180 days,SYN-ZONE-06,0,0,Medium,Medium,239100.0,None,victim
+SYN-ACC-0009,SYN-BANK-D,Current,Over 180 days,SYN-ZONE-22,0,0,Low,Medium,94700.0,None,victim
+SYN-ACC-0010,SYN-BANK-A,Savings,Over 180 days,SYN-ZONE-13,0,0,Medium,Medium,82300.0,None,victim
+SYN-ACC-0011,SYN-BANK-D,Savings,Over 180 days,SYN-ZONE-12,0,0,Low,Medium,82400.0,None,victim
+SYN-ACC-0012,SYN-BANK-B,Savings,Over 180 days,SYN-ZONE-13,0,0,Medium,Medium,262000.0,None,victim
+SYN-ACC-0013,SYN-BANK-C,Current,Over 180 days,SYN-ZONE-12,0,0,High,Medium,131900.0,None,victim
+SYN-ACC-0014,SYN-BANK-E,Savings,Over 180 days,SYN-ZONE-11,0,0,Low,Medium,265600.0,None,victim
+SYN-ACC-0015,SYN-BANK-C,Current,Over 180 days,SYN-ZONE-06,0,0,Medium,Medium,30700.0,None,victim
+SYN-ACC-0016,SYN-BANK-E,Savings,Over 180 days,SYN-ZONE-14,0,0,High,Medium,240200.0,None,victim
+SYN-ACC-0017,SYN-BANK-D,Current,Over 180 days,SYN-ZONE-20,0,0,Low,Medium,127900.0,None,victim
+SYN-ACC-0018,SYN-BANK-E,Savings,Over 180 days,SYN-ZONE-07,0,0,Low,Medium,218500.0,None,victim
+SYN-ACC-0019,SYN-BANK-A,Current,Over 180 days,SYN-ZONE-17,0,0,High,Medium,221400.0,None,victim
+SYN-ACC-0020,SYN-BANK-B,Savings,Over 180 days,SYN-ZONE-12,0,0,Low,Medium,285700.0,None,victim
+SYN-ACC-0021,SYN-BANK-C,Wallet,30-180 days,SYN-ZONE-20,0,2,Low,Spike,7300.0,None,mule
+SYN-ACC-0022,SYN-BANK-E,Current,Under 30 days,SYN-ZONE-10,3,2,Low,Spike,2700.0,None,mule
+SYN-ACC-0023,SYN-BANK-B,Current,30-180 days,SYN-ZONE-07,3,2,Low,Spike,182400.0,None,mule
+SYN-ACC-0024,SYN-BANK-B,Prepaid,Under 30 days,SYN-ZONE-20,3,2,Low,Spike,6800.0,None,mule
+SYN-ACC-0025,SYN-BANK-C,Savings,Under 30 days,SYN-ZONE-10,2,1,Low,Spike,3800.0,None,mule
+SYN-ACC-0026,SYN-BANK-B,Current,30-180 days,SYN-ZONE-17,1,2,Low,Spike,302900.0,Under review,mule
+SYN-ACC-0027,SYN-BANK-E,Prepaid,Under 30 days,SYN-ZONE-22,0,1,Low,Spike,637400.0,Under review,mule
+SYN-ACC-0028,SYN-BANK-B,Savings,Under 30 days,SYN-ZONE-07,0,0,Low,Spike,7900.0,None,mule
+SYN-ACC-0029,SYN-BANK-E,Savings,Under 30 days,SYN-ZONE-25,3,2,Low,Spike,137300.0,None,mule
+SYN-ACC-0030,SYN-BANK-D,Current,Under 30 days,SYN-ZONE-16,1,2,Low,Spike,113700.0,None,mule
+SYN-ACC-0031,SYN-BANK-A,Current,Under 30 days,SYN-ZONE-25,1,2,Low,Spike,83000.0,None,mule
+SYN-ACC-0032,SYN-BANK-A,Savings,Under 30 days,SYN-ZONE-18,3,0,Low,Spike,107400.0,None,mule
+SYN-ACC-0033,SYN-BANK-E,Prepaid,Under 30 days,SYN-ZONE-18,3,2,Low,Spike,267200.0,None,mule
+SYN-ACC-0034,SYN-BANK-E,Prepaid,Under 30 days,SYN-ZONE-14,1,2,Low,Spike,121400.0,None,mule
+SYN-ACC-0035,SYN-BANK-D,Savings,30-180 days,SYN-ZONE-09,2,2,Low,Spike,4100.0,None,mule
+SYN-ACC-0036,SYN-BANK-B,Current,Under 30 days,SYN-ZONE-09,2,0,Low,Spike,89900.0,None,mule
+SYN-ACC-0037,SYN-BANK-C,Savings,Under 30 days,SYN-ZONE-18,1,0,Low,Spike,173400.0,None,mule
+SYN-ACC-0038,SYN-BANK-B,Savings,Under 30 days,SYN-ZONE-23,3,1,Low,Spike,3000.0,None,mule
+SYN-ACC-0039,SYN-BANK-D,Savings,Under 30 days,SYN-ZONE-14,3,1,Low,Spike,7300.0,None,mule
+SYN-ACC-0040,SYN-BANK-E,Savings,30-180 days,SYN-ZONE-23,3,1,Low,Spike,500.0,None,mule
+SYN-ACC-0041,SYN-BANK-C,Current,,SYN-ZONE-10,1,1,Low,Spike,204700.0,None,mule
+SYN-ACC-0042,SYN-BANK-D,Savings,Under 30 days,SYN-ZONE-16,2,2,Low,Spike,5600.0,None,mule
+SYN-ACC-0043,SYN-BANK-D,Savings,Under 30 days,SYN-ZONE-24,1,2,Low,Spike,77000.0,None,mule
+SYN-ACC-0044,SYN-BANK-D,Prepaid,30-180 days,SYN-ZONE-19,0,0,Low,Spike,75700.0,None,mule
+SYN-ACC-0045,SYN-BANK-B,Savings,Under 30 days,SYN-ZONE-15,2,1,Low,Spike,80100.0,None,mule
+SYN-ACC-0046,SYN-BANK-D,Wallet,Under 30 days,SYN-ZONE-11,2,1,Low,Spike,2400.0,None,mule
+SYN-ACC-0047,SYN-BANK-A,Savings,30-180 days,SYN-ZONE-16,0,1,Low,Spike,152800.0,Under review,mule
+SYN-ACC-0048,SYN-BANK-A,Savings,Under 30 days,SYN-ZONE-25,1,1,Low,Spike,261200.0,Under review,mule
+SYN-ACC-0049,SYN-BANK-E,Savings,Under 30 days,SYN-ZONE-05,3,2,Low,Spike,1400.0,None,mule
+SYN-ACC-0050,SYN-BANK-B,Wallet,Under 30 days,SYN-ZONE-15,1,2,Low,Spike,73400.0,None,mule
+SYN-ACC-0051,SYN-BANK-A,Savings,Under 30 days,SYN-ZONE-25,0,2,Low,Spike,700.0,None,mule
+SYN-ACC-0052,SYN-BANK-C,Current,Under 30 days,SYN-ZONE-19,1,0,Low,Spike,4900.0,None,mule
+SYN-ACC-0053,SYN-BANK-B,Wallet,30-180 days,SYN-ZONE-04,0,2,Low,Spike,6400.0,None,mule
+SYN-ACC-0054,SYN-BANK-C,Current,30-180 days,SYN-ZONE-18,2,1,Low,Spike,322400.0,Under review,mule
+SYN-ACC-0055,SYN-BANK-C,Current,Under 30 days,SYN-ZONE-01,0,1,Low,Spike,361300.0,Under review,mule
+SYN-ACC-0056,SYN-BANK-D,Savings,Under 30 days,SYN-ZONE-23,0,0,Low,Spike,4400.0,None,mule
+SYN-ACC-0057,SYN-BANK-C,Prepaid,,SYN-ZONE-20,0,0,Low,Spike,114000.0,None,mule
+SYN-ACC-0058,SYN-BANK-E,Wallet,Under 30 days,SYN-ZONE-09,0,0,Low,Spike,79800.0,None,mule
