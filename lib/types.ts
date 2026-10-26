@@ -1,4 +1,4 @@
-// FraudCast – row types that mirror the Phase 2 database tables (schema.sql).
+// FraudCast – row types that mirror the database tables (schema.sql).
 
 export type CaseStatus = "New" | "In Review" | "Alert Sent" | "Acknowledged" | "Closed";
 
@@ -101,4 +101,55 @@ export type PredictionRow = {
   normalized_confidence: number;
   insufficient_evidence: boolean;
   created_at: string;
+};
+
+/* ---------- Phase 4 additions ---------- */
+
+export type ZoneRow = {
+  zone_id: string;
+  h3_index: string;
+  zone_name: string;
+  jurisdiction: string;
+  centroid_latitude: number;
+  centroid_longitude: number;
+  approximate_area: number;
+  historical_synthetic_cashout_count: number;
+};
+
+export type CashPointRow = {
+  location_id: string;
+  zone_id: string;
+  location_type: string;
+  synthetic_bank_code: string;
+  latitude: number;
+  longitude: number;
+  operating_status: string;
+  availability_window: string;
+};
+
+export type HistoryRow = {
+  historical_event_id: string;
+  case_id: string;
+  final_account_id: string;
+  cashout_zone_id: string;
+  cashout_timestamp: string;
+  amount_withdrawn: number;
+  fraud_type: string;
+  transfer_hop_count: number;
+  minutes_to_cashout: number;
+  splitting_pattern: string;
+};
+
+/** Full prediction row as stored by the forecast engine. */
+export type StoredPrediction = PredictionRow & {
+  prediction_id: string;
+  predicted_zone_id: string;
+  forecast_window_start: string | null;
+  forecast_window_end: string | null;
+  amount_exposed: number;
+  contributing_features: Record<string, unknown>;
+  missing_data_flags: string[];
+  data_quality: number;
+  baseline_zone: string | null;
+  model_version: string;
 };

@@ -1,21 +1,44 @@
 // Step 11 – Case Intelligence Workspace (PRD 12.3)
+// Phase 4: forecast card. Phase 5: AI summary + assistant. Phase 6: alert workflow + outcome recording.
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { generateCaseSummary } from "../../actions/ai";
+import { runCaseForecast } from "../../actions/forecast";
+import AiSections from "../../../components/fc/AiSections";
+import AlertsSection from "../../../components/fc/AlertsSection";
+import AssistantPanel from "../../../components/fc/AssistantPanel";
+import OutcomeSection from "../../../components/fc/OutcomeSection";
+import SubmitButton from "../../../components/fc/SubmitButton";
 import { Badge, Card, ConfidenceBadge, Fact, Notice, PriorityBadge, StatusBadge } from "../../../components/fc/ui";
+import { latestEvent } from "../../../lib/ai/audit";
+import { aiStatus } from "../../../lib/ai/config";
+import { SUMMARY_LABELS, type AiTextResult, type SummarySections } from "../../../lib/ai/summary";
 import {
   amountWithdrawn, computeAllPriorities, confidenceBand, holdings, hopCount, isStale, isWithdrawal,
   missingInfo, outOfOrder, splitCounts, staleMinutes,
 } from "../../../lib/calc";
 import { loadCase } from "../../../lib/data";
 import { demoNow } from "../../../lib/demo-time";
+import { roundTo100 } from "../../../lib/forecast";
+import { loadLatestRun } from "../../../lib/forecast-data";
 import { duration, dt, inr } from "../../../lib/format";
+import { syncSimulatedAlerts } from "../../../lib/workflow/alerts";
+
+export const maxDuration = 60; // AI calls can take a few seconds
 
 export default async function CaseWorkspace({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const data = await loadCase(decodeURIComponent(id));
+  const caseId = decodeURIComponent(id);
+  await syncSimulatedAlerts(caseId).catch(() => 0); // simulated recipient replies (Step 23)
+  const [data, run, summaryEvent] = await Promise.all([
+    loadCase(caseId),
+    loadLatestRun(caseId),
+    latestEvent<AiTextResult<SummarySections>>(caseId, "SUMMARY_GENERATED").catch(() => null),
+  ]);
   if (!data) notFound();
   const { kase: c, all, txns, alerts, outcome } = data;
   const now = demoNow();
+  const ai = aiStatus();
 
   const p = computeAllPriorities(all.cases, all.txns, all.preds, now).get(c.case_id)!;
   const closed = c.status === "Closed";
@@ -32,9 +55,10 @@ export default async function CaseWorkspace({ params }: { params: Promise<{ id: 
   const missing = missingInfo(c, now);
   const stale = isStale(c, now);
   const reconcileGap = !closed ? Math.abs(heldTotal - c.current_amount_at_risk) : 0;
+  const forecastOk = !!run && run.valid && !run.insufficient;
+  const fcPercents = forecastOk ? roundTo100([...run!.top3.map((z) => z.probability), run!.other]) : [];
 
-  // Rule-based summary (not AI). The AI summary is added in Phase 5.
-  const summary = [
+  const ruleSummary = [
     `On ${dt(c.fraud_timestamp)}, ${inr(c.original_amount)} was transferred from the victim account via ${c.payment_channel ?? "an unrecorded payment channel"} (${c.fraud_type}).`,
     `The complaint was reported ${duration(c.reporting_delay_minutes)} later.`,
     `The funds moved through ${beneficiaries.size} beneficiary account${beneficiaries.size === 1 ? "" : "s"} across ${hops} transfer step${hops === 1 ? "" : "s"}${maxSplit >= 3 ? `, including a split into ${maxSplit} accounts within 60 minutes` : ""}.`,
@@ -43,6 +67,13 @@ export default async function CaseWorkspace({ params }: { params: Promise<{ id: 
       ? `The case is closed: ${inr(outcome?.amount_protected ?? 0)} protected, ${inr(outcome?.amount_withdrawn ?? 0)} withdrawn and ${inr(outcome?.amount_unresolved ?? 0)} unresolved.`
       : `${inr(heldTotal)} is currently held in ${holders.length} account${holders.length === 1 ? "" : "s"}.`,
   ];
+
+  const summaryForm = (label: string, variant: "primary" | "secondary") => (
+    <form action={generateCaseSummary}>
+      <input type="hidden" name="case_id" value={c.case_id} />
+      <SubmitButton label={label} pendingLabel="Generating…" variant={variant} />
+    </form>
+  );
 
   return (
     <div className="space-y-5">
@@ -60,12 +91,13 @@ export default async function CaseWorkspace({ params }: { params: Promise<{ id: 
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Link href={`/cases/${c.case_id}/graph`} className="rounded bg-blue-700 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800 focus-visible:ring-2 focus-visible:ring-blue-500">
-            Open money-flow graph →
+          <Link href={`/audit?case=${c.case_id}`} className="rounded border border-slate-300 px-4 py-2 text-sm hover:bg-slate-50">Audit trail</Link>
+          <Link href={`/cases/${c.case_id}/graph`} className="rounded border border-slate-300 px-4 py-2 text-sm font-medium hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-500">
+            Money-flow graph
           </Link>
-          <span aria-disabled="true" title="Forecast engine is added in Phase 4" className="cursor-not-allowed rounded border border-slate-300 px-4 py-2 text-sm text-slate-400">
-            Cash-out forecast (Phase 4)
-          </span>
+          <Link href={`/cases/${c.case_id}/forecast`} className="rounded bg-blue-700 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800 focus-visible:ring-2 focus-visible:ring-blue-500">
+            Cash-out forecast & map →
+          </Link>
         </div>
       </div>
 
@@ -105,10 +137,20 @@ export default async function CaseWorkspace({ params }: { params: Promise<{ id: 
       <div className="grid gap-4 lg:grid-cols-3">
         <Card
           title="Case summary"
-          right={<Badge tone="slate" title="Built from structured data with fixed rules. AI summary arrives in Phase 5.">Rule-based · not AI</Badge>}
+          right={summaryEvent ? summaryForm("Regenerate", "secondary") : <Badge tone="slate" title="Built from structured data with fixed rules.">Rule-based · not AI</Badge>}
           className="lg:col-span-2"
         >
-          <p className="text-sm leading-6 text-slate-800">{summary.join(" ")}</p>
+          {summaryEvent ? (
+            <AiSections result={summaryEvent.value} labels={SUMMARY_LABELS} />
+          ) : (
+            <>
+              <p className="text-sm leading-6 text-slate-800">{ruleSummary.join(" ")}</p>
+              <div className="mt-3 flex flex-wrap items-center gap-3">
+                {summaryForm(ai.ready ? "Generate AI summary" : "Generate summary (template mode)", "primary")}
+                <span className="text-xs text-slate-500">Uses only this case&apos;s structured data. Every number is checked before display.</span>
+              </div>
+            </>
+          )}
         </Card>
 
         <Card title="Missing information" right={<Badge tone={missing.length ? "amber" : "green"}>{missing.length ? `${missing.length} gap(s)` : "Complete"}</Badge>}>
@@ -124,6 +166,69 @@ export default async function CaseWorkspace({ params }: { params: Promise<{ id: 
           <p className="mt-3 text-xs text-slate-500">Missing values are shown as gaps, never filled with estimates.</p>
         </Card>
       </div>
+
+      <Card
+        title="Cash-out forecast"
+        right={
+          !run ? <Badge tone="slate">Not run</Badge>
+          : !run.valid ? <Badge tone="red">Error</Badge>
+          : run.insufficient ? <Badge tone="amber">Insufficient evidence</Badge>
+          : <Badge tone="green">Available</Badge>
+        }
+      >
+        {!run && (
+          <>
+            <p className="mb-3 text-sm text-slate-600">No forecast has been run for this case yet.</p>
+            <form action={runCaseForecast}>
+              <input type="hidden" name="case_id" value={c.case_id} />
+              <SubmitButton label="Run forecast" pendingLabel="Running forecast…" />
+            </form>
+          </>
+        )}
+        {run && !run.valid && <p className="text-sm text-red-800">⚠ Forecast unavailable due to a calculation error. Open the forecast page to re-run it.</p>}
+        {run && run.valid && run.insufficient && (
+          <p className="text-sm text-amber-900">Insufficient evidence to narrow the forecast. Continue monitoring or conduct additional review.</p>
+        )}
+        {forecastOk && (
+          <div className="flex flex-wrap items-start gap-x-8 gap-y-2">
+            <ol className="min-w-[220px] space-y-1 text-sm">
+              {run!.top3.map((z, i) => (
+                <li key={z.zone_id} className="flex justify-between gap-4">
+                  <span>#{z.rank} <span className="font-mono text-xs">{z.zone_id}</span></span>
+                  <span className="font-semibold tabular-nums">{fcPercents[i]}%</span>
+                </li>
+              ))}
+              <li className="flex justify-between gap-4 text-slate-500"><span>Other zones</span><span className="tabular-nums">{fcPercents[3]}%</span></li>
+            </ol>
+            <div className="text-xs">
+              <p className={run!.typicalWindowPassed ? "text-red-700" : "text-slate-600"}>
+                Window: {run!.window ? `${dt(run!.window.start)} → ${dt(run!.window.end)}` : "not available"}{run!.typicalWindowPassed && " · ⚠ cash-out may be imminent"}
+              </p>
+              <p className="mt-1 text-slate-500">Indicative forecast. Requires human review. {run!.modelVersion} · {dt(run!.createdAt)}</p>
+            </div>
+          </div>
+        )}
+        {run && (
+          <Link href={`/cases/${c.case_id}/forecast`} className="mt-3 inline-block text-sm font-medium text-blue-700 underline">
+            Open forecast, explanation and map →
+          </Link>
+        )}
+      </Card>
+
+      <AlertsSection caseId={c.case_id} closed={closed} rank1Zone={forecastOk ? run!.top3[0].zone_id : null} forecastAvailable={forecastOk} />
+
+      <OutcomeSection
+        caseId={c.case_id}
+        closed={closed}
+        original={Number(c.original_amount)}
+        alreadyWithdrawn={withdrawn}
+        hasApprovedAlert={alerts.some((a) => a.approval_status === "Approved")}
+        rankedZones={forecastOk ? run!.top3.map((z) => z.zone_id) : []}
+      />
+
+      <Card title="Analyst assistant" right={<Badge tone={ai.ready ? "purple" : "slate"}>{ai.ready ? "AI on" : "Template mode"}</Badge>}>
+        <AssistantPanel caseId={c.case_id} aiReady={ai.ready} />
+      </Card>
 
       <Card title="Transaction timeline" right={<span className="text-xs text-slate-500">{txns.length} records · chronological</span>}>
         {badOrder.size > 0 && (
@@ -168,31 +273,6 @@ export default async function CaseWorkspace({ params }: { params: Promise<{ id: 
           </table>
         </div>
       </Card>
-
-      <div className="grid gap-4 lg:grid-cols-2">
-        <Card title="Intervention alerts">
-          {alerts.length === 0 ? (
-            <p className="text-sm text-slate-600">No alert has been raised for this case. The alert composer is added in Phase 6.</p>
-          ) : (
-            <ul className="space-y-2 text-sm">
-              {alerts.map((a) => (
-                <li key={a.alert_id} className="flex flex-wrap items-center gap-2 rounded border border-slate-200 p-2">
-                  <span className="font-mono text-xs">{a.alert_id}</span>
-                  <span>→ {a.recipient_id}</span>
-                  <StatusBadge status={a.acknowledgement_status} />
-                  <Badge tone="slate">Simulated</Badge>
-                  <span className="text-xs text-slate-500">Approved {dt(a.approved_at)} by {a.approved_by ?? "—"}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Card>
-        <Card title="Cash-out forecast">
-          <p className="text-sm text-slate-600">
-            Not run yet. The forecasting engine (top-three zones, time window and explanation) is added in Phase 4.
-          </p>
-        </Card>
-      </div>
     </div>
   );
 }

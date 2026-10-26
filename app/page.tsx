@@ -1,10 +1,13 @@
-// Step 9 – Fraud Operations Overview (PRD 12.1)
+// Step 9 – Fraud Operations Overview (PRD 12.1) – updated in Phase 4 with forecast controls
 import Link from "next/link";
+import { runAllForecasts } from "./actions/forecast";
+import SubmitButton from "../components/fc/SubmitButton";
 import { Card, Notice, StatusBadge, Tile } from "../components/fc/ui";
-import { computeAllPriorities, isStale } from "../lib/calc";
+import { computeAllPriorities, isStale, latestForecast } from "../lib/calc";
 import { loadOverview } from "../lib/data";
 import { demoNow } from "../lib/demo-time";
 import { duration, inr, minutesBetween } from "../lib/format";
+
 
 const STATUSES = ["New", "In Review", "Alert Sent", "Acknowledged", "Closed"] as const;
 
@@ -18,7 +21,6 @@ export default async function OverviewPage() {
   const totalAtRisk = active.reduce((s, c) => s + c.current_amount_at_risk, 0);
   const protectedAmt = outcomes.reduce((s, o) => s + o.amount_protected, 0);
 
-  // Average complaint-to-intervention time = alert approved_at − case report time
   const reportOf = new Map(cases.map((c) => [c.case_id, c.report_timestamp]));
   const responseTimes = alerts
     .filter((a) => a.approval_status === "Approved" && a.approved_at && reportOf.get(a.case_id))
@@ -36,23 +38,35 @@ export default async function OverviewPage() {
   const lowQuality = active.filter((c) => c.data_quality < 0.5);
   const withGaps = active.filter((c) => (c.missing_fields ?? []).length > 0 || c.payment_channel === null);
 
+  const fc = active.map((c) => latestForecast(preds.filter((p) => p.case_id === c.case_id)).status);
+  const fcAvailable = fc.filter((s) => s === "Available").length;
+  const fcInsufficient = fc.filter((s) => s === "Insufficient evidence").length;
+  const fcNotRun = fc.filter((s) => s === "Not run").length;
+
   const statusCounts = STATUSES.map((s) => ({ status: s, n: cases.filter((c) => c.status === s).length }));
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold">Fraud operations overview</h1>
-        <p className="text-sm text-slate-600">Live position across all synthetic cases. Select a tile to open the matching cases.</p>
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-semibold">Fraud operations overview</h1>
+          <p className="text-sm text-slate-600">Live position across all synthetic cases. Select a tile to open the matching cases.</p>
+        </div>
+        <form action={runAllForecasts}>
+          <SubmitButton label="Run forecasts for all cases" pendingLabel="Running forecasts…" />
+        </form>
       </div>
+
+      {fcNotRun > 0 && (
+        <Notice tone="blue">
+          {fcNotRun} active case(s) have no forecast yet. Select <strong>Run forecasts for all cases</strong> to rank likely cash-out zones and update priorities.
+        </Notice>
+      )}
 
       {(stale.length > 0 || lowQuality.length > 0) && (
         <Notice tone="amber">
           <strong>Data-health warning:</strong>{" "}
-          {stale.length > 0 && (
-            <>
-              {stale.length} case(s) have stale data ({stale.map((c) => c.case_id).join(", ")}).{" "}
-            </>
-          )}
+          {stale.length > 0 && <>{stale.length} case(s) have stale data ({stale.map((c) => c.case_id).join(", ")}). </>}
           {lowQuality.length > 0 && <>{lowQuality.length} case(s) have low data confidence. </>}
           Forecasts for these cases will carry lower confidence.
         </Notice>
@@ -63,35 +77,28 @@ export default async function OverviewPage() {
         <Tile label="Critical cases" value={critical.length} sub="Priority score ≥ 0.75" href="/cases?urgency=Critical" tone="red" />
         <Tile label="Total amount at risk" value={inr(totalAtRisk)} sub="Across active cases" href="/cases?sort=amount" tone="amber" />
         <Tile label="Amount protected" value={inr(protectedAmt)} sub={`From ${outcomes.length} closed synthetic cases`} href="/cases?status=Closed" tone="green" />
-        <Tile
-          label="Avg complaint-to-intervention"
-          value={avgResponse === null ? "Not available" : duration(avgResponse)}
-          sub={`Report → alert approval, ${responseTimes.length} alerts`}
-        />
+        <Tile label="Avg complaint-to-intervention" value={avgResponse === null ? "Not available" : duration(avgResponse)} sub={`Report → alert approval, ${responseTimes.length} alerts`} />
         <Tile
           label="Alerts awaiting acknowledgement"
           value={pending.length}
-          sub={
-            <>
-              {overdue.length > 0 ? <span className="font-medium text-red-700">⚠ {overdue.length} overdue · </span> : null}
-              Simulated recipients
-            </>
-          }
+          sub={<>{overdue.length > 0 ? <span className="font-medium text-red-700">⚠ {overdue.length} overdue · </span> : null}Simulated recipients</>}
           href="/cases?status=Alert+Sent"
           tone={overdue.length ? "red" : "amber"}
         />
         <Tile label="Stale or low-confidence cases" value={stale.length + lowQuality.length} sub="Data older than 60 min or confidence < 0.50" />
-        <Tile label="Forecasts run" value={new Set(preds.map((p) => p.case_id)).size} sub="Forecast engine arrives in Phase 4" />
+        <Tile
+          label="Active forecasts"
+          value={`${fcAvailable} / ${active.length}`}
+          sub={<>{fcInsufficient > 0 && <span className="text-amber-800">{fcInsufficient} insufficient evidence · </span>}<Link href="/evaluation" className="underline">See evaluation</Link></>}
+          tone="purple"
+        />
       </div>
 
       <Card title="Case status summary">
         <ul className="flex flex-wrap gap-3">
           {statusCounts.map(({ status, n }) => (
             <li key={status}>
-              <Link
-                href={`/cases?status=${encodeURIComponent(status)}`}
-                className="flex items-center gap-2 rounded-md border border-slate-200 px-3 py-2 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-500"
-              >
+              <Link href={`/cases?status=${encodeURIComponent(status)}`} className="flex items-center gap-2 rounded-md border border-slate-200 px-3 py-2 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-500">
                 <StatusBadge status={status} />
                 <span className="text-lg font-semibold">{n}</span>
               </Link>
@@ -101,9 +108,7 @@ export default async function OverviewPage() {
         </ul>
       </Card>
 
-      <p className="text-xs text-slate-500">
-        Computed on synthetic data; does not represent real-world performance.
-      </p>
+      <p className="text-xs text-slate-500">Computed on synthetic data; does not represent real-world performance.</p>
     </div>
   );
 }
