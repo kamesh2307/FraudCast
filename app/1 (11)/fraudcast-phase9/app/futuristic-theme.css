@@ -1,0 +1,215 @@
+/* FraudCast – Phase 9 "soft cyberpunk" theme with light/dark switch.
+   Dark  = minimal futuristic: near-black, faint grid, pastel glow (default).
+   Light = the clean Apple-style look from Phase 8.
+   Works by re-pointing Tailwind v4 colour tokens under html[data-theme="dark"], so every page follows
+   without edits. Import AFTER globals.css and apple-theme.css (app/layout.tsx does this). */
+
+/* ---------- shared tokens (light) ---------- */
+:root {
+  --fc-bg: #f5f5f7;
+  --fc-surface: #ffffff;
+  --fc-surface-2: #f3f3f6;
+  --fc-text: #1d1d1f;
+  --fc-muted: #6e6e73;
+  --fc-line: rgba(0, 0, 0, 0.07);
+  --fc-edge-a: rgba(181, 120, 210, 0.35);
+  --fc-edge-b: rgba(80, 180, 200, 0.3);
+  --fc-glow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 6px 24px rgba(0, 0, 0, 0.05);
+  --fc-num: #1d1d1f;
+  --fc-accent: #7c5cd6;
+  --fc-accent-2: #2a9db5;
+
+  --t-red: #c4314b;    --t-red-bg: rgba(232, 92, 120, 0.12);
+  --t-amber: #9a5b00;  --t-amber-bg: rgba(240, 170, 60, 0.16);
+  --t-blue: #1f6fa8;   --t-blue-bg: rgba(80, 160, 220, 0.12);
+  --t-green: #1e7a55;  --t-green-bg: rgba(80, 200, 150, 0.14);
+  --t-slate: #55555c;  --t-slate-bg: rgba(0, 0, 0, 0.05);
+  --t-purple: #5b46b8; --t-purple-bg: rgba(140, 120, 230, 0.13);
+}
+
+/* ---------- dark tokens ---------- */
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --fc-bg: #0a0d14;
+  --fc-surface: #10141e;
+  --fc-surface-2: #161b27;
+  --fc-text: #e7e9f1;
+  --fc-muted: #8d94a8;
+  --fc-line: rgba(255, 255, 255, 0.07);
+  --fc-edge-a: rgba(240, 171, 214, 0.32);
+  --fc-edge-b: rgba(139, 217, 240, 0.24);
+  --fc-glow: 0 0 0 1px rgba(255, 255, 255, 0.02), 0 10px 40px -12px rgba(150, 120, 255, 0.18);
+  --fc-num: #f4f5fa;
+  --fc-accent: #c9b8ff;
+  --fc-accent-2: #8bd9f0;
+
+  --t-red: #f4a3b1;    --t-red-bg: rgba(244, 163, 177, 0.11);
+  --t-amber: #f3cc86;  --t-amber-bg: rgba(243, 204, 134, 0.11);
+  --t-blue: #9cdcf2;   --t-blue-bg: rgba(156, 220, 242, 0.1);
+  --t-green: #95e3c4;  --t-green-bg: rgba(149, 227, 196, 0.1);
+  --t-slate: #a7aec0;  --t-slate-bg: rgba(255, 255, 255, 0.06);
+  --t-purple: #c4b5fb; --t-purple-bg: rgba(196, 181, 251, 0.11);
+
+  /* Tailwind v4 tokens: invert neutrals, soften accents */
+  --color-white: #10141e;   /* "white" surfaces become dark glass; text-white on pastel buttons becomes dark */
+  --color-black: #ffffff;   /* bg-black/5 overlays become faint light overlays */
+
+  --color-slate-50: #0a0d14;  --color-slate-100: #151a25; --color-slate-200: #222938;
+  --color-slate-300: #2e3647; --color-slate-400: #4b5468; --color-slate-500: #8d94a8;
+  --color-slate-600: #a3aabc; --color-slate-700: #c2c7d4; --color-slate-800: #dadde6;
+  --color-slate-900: #eef0f6;
+
+  --color-blue-50: #121c2c;  --color-blue-100: #162438; --color-blue-300: #3f6f8f;
+  --color-blue-500: #8bd9f0; --color-blue-600: #a6e3f4;
+  --color-blue-700: #8bd9f0; /* primary buttons + links: pastel cyan */
+  --color-blue-800: #b3e9f7;
+
+  --color-red-50: #24141a;   --color-red-100: #2f1820; --color-red-300: #6b2f3c; --color-red-400: #e98d9d;
+  --color-red-500: #f4a3b1;  --color-red-600: #f4a3b1; --color-red-700: #f4a3b1; --color-red-800: #f7b9c4; --color-red-900: #f9ccd4;
+
+  --color-amber-50: #231d12; --color-amber-100: #2e2515; --color-amber-300: #6a5326; --color-amber-400: #f3cc86;
+  --color-amber-500: #f3cc86; --color-amber-600: #f3cc86; --color-amber-700: #f3cc86; --color-amber-800: #f6d79f;
+  --color-amber-900: #f8e0b4; --color-amber-950: #fbe9c8;
+
+  --color-orange-50: #241a12; --color-orange-100: #2f2116; --color-orange-500: #f5b98a; --color-orange-600: #f5b98a; --color-orange-800: #f8caa6;
+  --color-yellow-50: #22200f; --color-yellow-500: #eedc8c;
+
+  --color-emerald-50: #10211c; --color-emerald-100: #142a23; --color-emerald-300: #2d5c4a;
+  --color-emerald-700: #95e3c4; --color-emerald-800: #aeead2; --color-emerald-900: #c5f0df;
+
+  --color-violet-50: #19162c; --color-violet-100: #201b38; --color-violet-600: #c4b5fb;
+  --color-violet-700: #c4b5fb; --color-violet-800: #d3c8fc; --color-violet-900: #e0d9fd;
+}
+
+/* ---------- page ---------- */
+body { background: var(--fc-bg); color: var(--fc-text); transition: background-color .25s ease, color .25s ease; }
+html[data-theme="dark"] body {
+  background:
+    radial-gradient(900px 420px at 15% -10%, rgba(196, 181, 251, 0.09), transparent 60%),
+    radial-gradient(800px 380px at 95% 0%, rgba(139, 217, 240, 0.07), transparent 60%),
+    linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px) 0 0 / 44px 44px,
+    linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px) 0 0 / 44px 44px,
+    var(--fc-bg);
+  background-attachment: fixed;
+}
+html[data-theme="dark"] main h1 { color: var(--fc-num); }
+
+/* ---------- components (used by components/fc/ui.tsx) ---------- */
+.fc-card, .fc-tile {
+  border-radius: 18px;
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--fc-surface), var(--fc-surface)) padding-box,
+    linear-gradient(135deg, var(--edge, var(--fc-edge-a)), var(--fc-edge-b) 60%, var(--fc-line)) border-box;
+  box-shadow: var(--fc-glow);
+}
+html[data-theme="dark"] .fc-card, html[data-theme="dark"] .fc-tile {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.012)) padding-box,
+    linear-gradient(var(--fc-surface), var(--fc-surface)) padding-box,
+    linear-gradient(135deg, var(--edge, var(--fc-edge-a)), var(--fc-edge-b) 55%, rgba(255,255,255,0.05)) border-box;
+  backdrop-filter: blur(10px);
+}
+.fc-tile { transition: transform .2s ease, box-shadow .2s ease; }
+a:hover > .fc-tile { transform: translateY(-2px); }
+html[data-theme="dark"] a:hover > .fc-tile { box-shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 14px 44px -10px var(--edge, rgba(196,181,251,0.35)); }
+.fc-tile[data-tone="red"]    { --edge: rgba(244, 163, 177, 0.55); }
+.fc-tile[data-tone="amber"]  { --edge: rgba(243, 204, 134, 0.5); }
+.fc-tile[data-tone="blue"]   { --edge: rgba(156, 220, 242, 0.5); }
+.fc-tile[data-tone="green"]  { --edge: rgba(149, 227, 196, 0.5); }
+.fc-tile[data-tone="purple"] { --edge: rgba(196, 181, 251, 0.55); }
+.fc-tile[data-tone="slate"]  { --edge: rgba(167, 174, 192, 0.3); }
+.fc-num { color: var(--fc-num); font-variant-numeric: tabular-nums; }
+html[data-theme="dark"] .fc-num { text-shadow: 0 0 22px rgba(196, 181, 251, 0.18); }
+.fc-title { color: var(--fc-text); }
+.fc-muted { color: var(--fc-muted); }
+
+.fc-pill, .fc-notice { color: var(--fg); background: var(--bg); }
+.fc-notice { border-radius: 14px; }
+html[data-theme="dark"] .fc-notice { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--fg) 22%, transparent); }
+[data-tone="red"]    { --fg: var(--t-red);    --bg: var(--t-red-bg); }
+[data-tone="amber"]  { --fg: var(--t-amber);  --bg: var(--t-amber-bg); }
+[data-tone="blue"]   { --fg: var(--t-blue);   --bg: var(--t-blue-bg); }
+[data-tone="green"]  { --fg: var(--t-green);  --bg: var(--t-green-bg); }
+[data-tone="slate"]  { --fg: var(--t-slate);  --bg: var(--t-slate-bg); }
+[data-tone="purple"] { --fg: var(--t-purple); --bg: var(--t-purple-bg); }
+.fc-dot { background: var(--fg); }
+html[data-theme="dark"] .fc-dot { box-shadow: 0 0 8px var(--fg); }
+.fc-pulse { animation: fc-pulse 2.4s ease-in-out infinite; }
+@keyframes fc-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+
+/* Header and nav */
+.fc-header { background: color-mix(in srgb, var(--fc-bg) 72%, transparent); border-bottom: 1px solid var(--fc-line); }
+.fc-nav-active { position: relative; }
+html[data-theme="dark"] .fc-nav-active::after {
+  content: ""; position: absolute; left: 14px; right: 14px; bottom: -1px; height: 2px; border-radius: 2px;
+  background: linear-gradient(90deg, #f0abd6, #c4b5fb, #8bd9f0);
+  box-shadow: 0 0 10px rgba(196, 181, 251, 0.6);
+}
+
+/* Primary buttons: soft gradient in dark */
+html[data-theme="dark"] .bg-blue-700 {
+  background-image: linear-gradient(100deg, #f0b8d8, #c4b5fb 50%, #8bd9f0);
+  color: #0d1018;
+}
+html[data-theme="dark"] .bg-blue-700:hover { filter: brightness(1.08); }
+html[data-theme="dark"] .bg-red-700 { background-color: #e98d9d; color: #160a0d; }
+
+/* ---------- inputs ---------- */
+html[data-theme="dark"] main input:not([type="checkbox"]):not([type="radio"]),
+html[data-theme="dark"] main select,
+html[data-theme="dark"] main textarea {
+  background-color: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: var(--fc-text);
+}
+html[data-theme="dark"] main input:focus, html[data-theme="dark"] main select:focus, html[data-theme="dark"] main textarea:focus {
+  border-color: #c4b5fb; box-shadow: 0 0 0 4px rgba(196, 181, 251, 0.18);
+}
+html[data-theme="dark"] option { background: #151a25; color: #e7e9f1; }
+
+/* ---------- earlier hard-coded colours (Phase 8 classes) ---------- */
+html[data-theme="dark"] .text-\[\#6b3a00\], html[data-theme="dark"] .text-\[\#8a4b00\] { color: var(--t-amber); }
+html[data-theme="dark"] .text-\[\#c93400\] { color: #f5b98a; }
+html[data-theme="dark"] .bg-\[\#ff9f0a\]\/\[0\.12\] { background: var(--t-amber-bg); box-shadow: inset 0 0 0 1px rgba(243,204,134,.25); }
+
+/* ---------- SVG graphs (money-flow graph, trail line view) ---------- */
+html[data-theme="dark"] svg text[fill="#1d1d1f"], html[data-theme="dark"] svg text[fill="#0f172a"] { fill: #e7e9f1; }
+html[data-theme="dark"] svg text[fill="#48484a"] { fill: #c2c7d4; }
+html[data-theme="dark"] svg text[fill="#6e6e73"], html[data-theme="dark"] svg text[fill="#64748b"], html[data-theme="dark"] svg text[fill="#86868b"] { fill: #8d94a8; }
+html[data-theme="dark"] svg text[fill="#c93400"], html[data-theme="dark"] svg text[fill="#b45309"] { fill: #f5b98a; }
+html[data-theme="dark"] svg text[fill="#d70015"], html[data-theme="dark"] svg text[fill="#dc2626"] { fill: #f4a3b1; }
+html[data-theme="dark"] svg rect[fill="#ffffff"], html[data-theme="dark"] svg rect[fill="#fff"] { fill: #161b27; }
+html[data-theme="dark"] svg [stroke="#cbd5e1"], html[data-theme="dark"] svg [stroke="rgba(0,0,0,0.08)"] { stroke: rgba(255,255,255,0.12); }
+html[data-theme="dark"] svg circle[stroke="#ffffff"] { stroke: #10141e; }
+html[data-theme="dark"] svg rect[fill="#f1f5f9"] { fill: #1b2130; }
+html[data-theme="dark"] svg rect[fill="#fffbeb"] { fill: #2a2214; }
+html[data-theme="dark"] svg rect[fill="#fef2f2"] { fill: #2a161b; }
+html[data-theme="dark"] svg [stroke="#475569"], html[data-theme="dark"] svg [fill="#475569"] { stroke: #8d94a8; }
+html[data-theme="dark"] svg path[fill="#475569"] { fill: #8d94a8; }
+html[data-theme="dark"] svg [stroke="#aeaeb2"] { stroke: #5b6478; }
+html[data-theme="dark"] svg path[fill="#aeaeb2"] { fill: #5b6478; }
+
+/* ---------- maps ---------- */
+html[data-theme="dark"] .leaflet-tile-pane { filter: invert(1) hue-rotate(185deg) brightness(0.82) contrast(0.92) saturate(0.6); }
+html[data-theme="dark"] .leaflet-container { background: #0e121b; }
+html[data-theme="dark"] .leaflet-control-zoom a, html[data-theme="dark"] .leaflet-control-attribution {
+  background: rgba(16, 20, 30, 0.85) !important; color: #c2c7d4 !important; border-color: rgba(255,255,255,0.08) !important;
+}
+html[data-theme="dark"] .leaflet-control-attribution a { color: #8bd9f0 !important; }
+html[data-theme="dark"] .fc-trail-label, html[data-theme="dark"] .fc-rank-label {
+  background: rgba(16, 20, 30, 0.9) !important; color: #e7e9f1 !important; border: 1px solid rgba(196,181,251,0.3) !important;
+}
+html[data-theme="dark"] .fc-trail-label .t-mono { color: #c2c7d4; }
+html[data-theme="dark"] .fc-trail-label .t-muted { color: #8d94a8; }
+html[data-theme="dark"] .fc-trail-label .t-warn { color: #f5b98a; }
+html[data-theme="dark"] .fc-trail-label .t-danger { color: #f4a3b1; }
+html[data-theme="dark"] .leaflet-tooltip { background: #151a25; color: #e7e9f1; border-color: rgba(255,255,255,0.1); }
+
+/* ---------- scrollbars + motion ---------- */
+html[data-theme="dark"] * { scrollbar-color: rgba(255, 255, 255, 0.18) transparent; }
+@media (prefers-reduced-motion: reduce) {
+  .fc-pulse { animation: none; }
+  .fc-tile, body { transition: none; }
+  a:hover > .fc-tile { transform: none; }
+}

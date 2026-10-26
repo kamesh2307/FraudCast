@@ -1,5 +1,6 @@
 // Step 11 – Case Intelligence Workspace (PRD 12.3)
-// Phase 4: forecast card. Phase 5: AI summary + assistant. Phase 6: alert workflow + outcome recording.
+// Phase 4: forecast card. Phase 5: AI summary + assistant. Phase 6: alerts + outcome.
+// Phase 8: complainant identity (synthetic, masked) and the Money trail link.
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { generateCaseSummary } from "../../actions/ai";
@@ -7,6 +8,7 @@ import { runCaseForecast } from "../../actions/forecast";
 import AiSections from "../../../components/fc/AiSections";
 import AlertsSection from "../../../components/fc/AlertsSection";
 import AssistantPanel from "../../../components/fc/AssistantPanel";
+import MaskedId from "../../../components/fc/MaskedId";
 import OutcomeSection from "../../../components/fc/OutcomeSection";
 import SubmitButton from "../../../components/fc/SubmitButton";
 import { Badge, Card, ConfidenceBadge, Fact, Notice, PriorityBadge, StatusBadge } from "../../../components/fc/ui";
@@ -22,7 +24,9 @@ import { demoNow } from "../../../lib/demo-time";
 import { roundTo100 } from "../../../lib/forecast";
 import { loadLatestRun } from "../../../lib/forecast-data";
 import { duration, dt, inr } from "../../../lib/format";
+import { formatAadhaar, identityOf, maskAadhaar, maskPan } from "../../../lib/identity";
 import { syncSimulatedAlerts } from "../../../lib/workflow/alerts";
+
 
 export const maxDuration = 60; // AI calls can take a few seconds
 
@@ -39,6 +43,7 @@ export default async function CaseWorkspace({ params }: { params: Promise<{ id: 
   const { kase: c, all, txns, alerts, outcome } = data;
   const now = demoNow();
   const ai = aiStatus();
+  const complainant = identityOf(data.accounts.find((a) => a.account_id === c.victim_account_id));
 
   const p = computeAllPriorities(all.cases, all.txns, all.preds, now).get(c.case_id)!;
   const closed = c.status === "Closed";
@@ -79,8 +84,9 @@ export default async function CaseWorkspace({ params }: { params: Promise<{ id: 
     <div className="space-y-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <Link href="/cases" className="text-sm text-blue-700 hover:underline">← Case queue</Link>
+          <Link href="/cases" className="text-sm text-blue-700 hover:underline">‹ Cases</Link>
           <h1 className="mt-1 font-mono text-2xl font-semibold">{c.case_id}</h1>
+          {complainant.holder_name && <p className="mt-0.5 text-[15px] text-slate-600">Complaint by {complainant.holder_name}</p>}
           <div className="mt-2 flex flex-wrap items-center gap-2">
             <PriorityBadge band={p.band} title={p.explanation} />
             <span className="text-xs text-slate-500">score {p.score.toFixed(2)}</span>
@@ -91,12 +97,11 @@ export default async function CaseWorkspace({ params }: { params: Promise<{ id: 
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Link href={`/audit?case=${c.case_id}`} className="rounded border border-slate-300 px-4 py-2 text-sm hover:bg-slate-50">Audit trail</Link>
-          <Link href={`/cases/${c.case_id}/graph`} className="rounded border border-slate-300 px-4 py-2 text-sm font-medium hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-blue-500">
-            Money-flow graph
-          </Link>
-          <Link href={`/cases/${c.case_id}/forecast`} className="rounded bg-blue-700 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800 focus-visible:ring-2 focus-visible:ring-blue-500">
-            Cash-out forecast & map →
+          <Link href={`/audit?case=${c.case_id}`} className="rounded-full bg-black/[0.05] px-4 py-2 text-sm font-medium text-slate-800 hover:bg-black/[0.08]">Audit trail</Link>
+          <Link href={`/cases/${c.case_id}/graph`} className="rounded-full bg-black/[0.05] px-4 py-2 text-sm font-medium text-slate-800 hover:bg-black/[0.08]">Money-flow graph</Link>
+          <Link href={`/cases/${c.case_id}/trail`} className="rounded-full bg-black/[0.05] px-4 py-2 text-sm font-medium text-slate-800 hover:bg-black/[0.08]">Money trail map</Link>
+          <Link href={`/cases/${c.case_id}/forecast`} className="rounded-full bg-blue-700 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800 focus-visible:ring-2 focus-visible:ring-blue-500">
+            Cash-out forecast ›
           </Link>
         </div>
       </div>
@@ -108,6 +113,9 @@ export default async function CaseWorkspace({ params }: { params: Promise<{ id: 
       <div className="grid gap-4 lg:grid-cols-3">
         <Card title="Complaint summary" className="lg:col-span-2">
           <dl className="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-3">
+            <Fact label="Complainant (synthetic)" value={complainant.holder_name ?? "Not available"} warn={!complainant.holder_name} />
+            <Fact label="Aadhaar (synthetic)" value={<MaskedId label="Aadhaar" masked={maskAadhaar(complainant.aadhaar_synthetic)} full={formatAadhaar(complainant.aadhaar_synthetic)} />} />
+            <Fact label="PAN (synthetic)" value={<MaskedId label="PAN" masked={maskPan(complainant.pan_synthetic)} full={complainant.pan_synthetic} />} />
             <Fact label="Fraud type" value={c.fraud_type} />
             <Fact label="Payment channel" value={c.payment_channel ?? "Not available"} warn={!c.payment_channel} />
             <Fact label="Initial beneficiary" value={<span className="font-mono text-xs">{c.initial_beneficiary_account_id}</span>} />
@@ -118,14 +126,15 @@ export default async function CaseWorkspace({ params }: { params: Promise<{ id: 
             <Fact label="Beneficiary accounts" value={beneficiaries.size} />
             <Fact label="Transfer hops" value={hops} />
           </dl>
+          {!complainant.holder_name && <p className="mt-3 text-xs text-amber-800">Run phase8.sql in Supabase to load synthetic names, Aadhaar and PAN.</p>}
         </Card>
 
         <Card title="Money position">
           <dl className="space-y-3">
             <Fact label="Original amount" value={inr(c.original_amount)} />
-            <div className="rounded-md border-2 border-amber-400 bg-amber-50 p-3">
+            <div className="rounded-[14px] bg-[#ff9f0a]/[0.12] p-3">
               <dt className="text-xs font-medium text-amber-900">{closed ? "Unresolved amount" : "Current amount exposed"}</dt>
-              <dd className="text-2xl font-bold text-amber-950">{inr(c.current_amount_at_risk)}</dd>
+              <dd className="text-2xl font-bold tracking-tight text-[#6b3a00]">{inr(c.current_amount_at_risk)}</dd>
               {!closed && <dd className="text-xs text-amber-900">Held in {holders.length} account(s)</dd>}
             </div>
             <Fact label="Already withdrawn" value={inr(withdrawn)} warn={withdrawn > 0} />
@@ -147,7 +156,7 @@ export default async function CaseWorkspace({ params }: { params: Promise<{ id: 
               <p className="text-sm leading-6 text-slate-800">{ruleSummary.join(" ")}</p>
               <div className="mt-3 flex flex-wrap items-center gap-3">
                 {summaryForm(ai.ready ? "Generate AI summary" : "Generate summary (template mode)", "primary")}
-                <span className="text-xs text-slate-500">Uses only this case&apos;s structured data. Every number is checked before display.</span>
+                <span className="text-xs text-slate-500">Uses only this case&apos;s structured data. Names and IDs are never sent to the AI.</span>
               </div>
             </>
           )}
@@ -209,8 +218,8 @@ export default async function CaseWorkspace({ params }: { params: Promise<{ id: 
           </div>
         )}
         {run && (
-          <Link href={`/cases/${c.case_id}/forecast`} className="mt-3 inline-block text-sm font-medium text-blue-700 underline">
-            Open forecast, explanation and map →
+          <Link href={`/cases/${c.case_id}/forecast`} className="mt-3 inline-block text-sm font-medium text-blue-700 hover:underline">
+            Open forecast, explanation and map ›
           </Link>
         )}
       </Card>

@@ -1,0 +1,112 @@
+/* FraudCast – Apple-style theme (Phase 8).
+   Works by re-pointing Tailwind v4's design tokens, so every existing page picks it up without edits.
+   Import AFTER globals.css (app/layout.tsx does this). With Tailwind v3 the token lines are simply ignored. */
+
+:root {
+  /* Typography: San Francisco on Apple devices, Segoe UI Variable on Windows, Inter/system elsewhere */
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI Variable Text", "Segoe UI", Inter, system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Apple system colours mapped onto the Tailwind palette the app already uses */
+  --color-blue-50: #eef5ff;
+  --color-blue-100: #dbeaff;
+  --color-blue-300: #8fc1f7;
+  --color-blue-500: #0a84ff;
+  --color-blue-600: #0077ed;
+  --color-blue-700: #0071e3; /* primary buttons */
+  --color-blue-800: #0062c4; /* hover */
+
+  --color-slate-50: #f5f5f7; /* page background */
+  --color-slate-100: #f0f0f3;
+  --color-slate-200: #e5e5ea;
+  --color-slate-300: #d1d1d6;
+  --color-slate-400: #aeaeb2;
+  --color-slate-500: #86868b;
+  --color-slate-600: #6e6e73;
+  --color-slate-700: #48484a;
+  --color-slate-800: #2c2c2e;
+  --color-slate-900: #1d1d1f;
+
+  --color-red-50: #fff1f0;
+  --color-red-700: #d70015;
+  --color-red-800: #b5000f;
+  --color-amber-50: #fff8eb;
+  --color-amber-100: #ffefcc;
+  --color-amber-900: #8a4b00;
+  --color-emerald-50: #effbf3;
+  --color-emerald-700: #248a3d;
+  --color-emerald-800: #1d7233;
+
+  /* Softer, rounder surfaces */
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --radius-2xl: 22px;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 6px 20px rgba(0, 0, 0, 0.05);
+  --shadow: 0 2px 6px rgba(0, 0, 0, 0.06), 0 12px 32px rgba(0, 0, 0, 0.07);
+
+  color-scheme: light;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: #f5f5f7;
+  color: #1d1d1f;
+  letter-spacing: -0.006em;
+}
+
+/* Large titles, like iOS/macOS apps */
+main h1 {
+  font-size: 2.1rem;
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+/* Plain "rounded" buttons/inputs get the softer Apple radius */
+.rounded { border-radius: 10px; }
+
+/* Inputs and selects: soft fill instead of hard borders */
+main input:not([type="checkbox"]):not([type="radio"]),
+main select,
+main textarea {
+  background-color: #ffffff;
+  border-color: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+main input:not([type="checkbox"]):not([type="radio"]):focus,
+main select:focus,
+main textarea:focus {
+  outline: none;
+  border-color: #0071e3;
+  box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.18);
+}
+
+/* Tables read like grouped lists */
+main table thead { background: transparent; }
+main table th { font-weight: 600; letter-spacing: 0.02em; }
+
+/* Gentle press feedback on every button */
+main button:not(:disabled):active { transform: scale(0.98); }
+
+/* Thin, quiet scrollbars */
+* { scrollbar-width: thin; scrollbar-color: rgba(0, 0, 0, 0.2) transparent; }
+
+/* Respect reduced-motion settings */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+  main button:not(:disabled):active { transform: none; }
+}
+
+/* Keep Leaflet map controls under the frosted header */
+.leaflet-pane, .leaflet-top, .leaflet-bottom { z-index: 400; }
+.leaflet-control-container .leaflet-top, .leaflet-control-container .leaflet-bottom { z-index: 500; }

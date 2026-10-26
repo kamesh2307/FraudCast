@@ -1,25 +1,18 @@
-// FraudCast – small shared UI pieces (server-safe, no hooks).
-// Status is never shown by colour alone: every badge also carries a text label.
+// FraudCast – shared UI pieces (Phase 9: soft cyberpunk dark / clean light). Same exports and props as before,
+// so every page keeps working. Colours come from futuristic-theme.css, so both themes stay readable.
+// Status is never shown by colour alone: every badge also carries a text label or icon.
 
 import Link from "next/link";
 import type { ReactNode } from "react";
 
 type Tone = "red" | "amber" | "blue" | "green" | "slate" | "purple";
 
-const TONES: Record<Tone, string> = {
-  red: "bg-red-50 text-red-800 border-red-300",
-  amber: "bg-amber-50 text-amber-900 border-amber-300",
-  blue: "bg-blue-50 text-blue-800 border-blue-300",
-  green: "bg-emerald-50 text-emerald-800 border-emerald-300",
-  slate: "bg-slate-100 text-slate-700 border-slate-300",
-  purple: "bg-violet-50 text-violet-800 border-violet-300",
-};
-
 export function Badge({ tone = "slate", children, dashed = false, title }: { tone?: Tone; children: ReactNode; dashed?: boolean; title?: string }) {
   return (
     <span
       title={title}
-      className={`inline-flex items-center gap-1 whitespace-nowrap rounded-full border px-2 py-0.5 text-xs font-medium ${TONES[tone]} ${dashed ? "border-dashed" : ""}`}
+      data-tone={tone}
+      className={`fc-pill inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${dashed ? "outline outline-1 outline-dashed" : ""}`}
     >
       {children}
     </span>
@@ -32,7 +25,7 @@ const PRIORITY_ICON: Record<string, string> = { Critical: "▲▲", High: "▲",
 export function PriorityBadge({ band, title }: { band: string; title?: string }) {
   return (
     <Badge tone={PRIORITY_TONE[band] ?? "slate"} title={title}>
-      <span aria-hidden="true">{PRIORITY_ICON[band] ?? ""}</span>
+      <span aria-hidden="true" className="text-[9px]">{PRIORITY_ICON[band] ?? ""}</span>
       {band}
     </Badge>
   );
@@ -50,31 +43,32 @@ export function ConfidenceBadge({ level }: { level: "High" | "Medium" | "Low" })
 }
 
 const STATUS_TONE: Record<string, Tone> = {
-  New: "blue",
-  "In Review": "purple",
-  "Alert Sent": "amber",
-  Acknowledged: "green",
-  Closed: "slate",
-  Pending: "amber",
-  Overdue: "red",
+  New: "blue", "In Review": "purple", "Alert Sent": "amber", Acknowledged: "green", Closed: "slate", Pending: "amber", Overdue: "red",
 };
 
 export function StatusBadge({ status }: { status: string }) {
-  return <Badge tone={STATUS_TONE[status] ?? "slate"}>{status}</Badge>;
+  const tone = STATUS_TONE[status] ?? "slate";
+  return (
+    <Badge tone={tone}>
+      <span aria-hidden="true" data-tone={tone} className={`fc-dot h-1.5 w-1.5 rounded-full ${status === "Overdue" ? "fc-pulse" : ""}`} />
+      {status}
+    </Badge>
+  );
 }
 
 export function ForecastBadge({ status }: { status: string }) {
   if (status === "Available") return <Badge tone="green">Available</Badge>;
   if (status === "Insufficient evidence") return <Badge tone="amber">Insufficient evidence</Badge>;
-  return <Badge tone="slate" title="The forecast engine is added in Phase 4">Not run</Badge>;
+  return <Badge tone="slate" title="Run the forecast from the Overview page">Not run</Badge>;
 }
 
+/** Panel with a soft gradient edge (glows faintly in dark mode). */
 export function Card({ title, right, children, className = "" }: { title?: ReactNode; right?: ReactNode; children: ReactNode; className?: string }) {
   return (
-    <section className={`rounded-lg border border-slate-200 bg-white p-4 shadow-sm ${className}`}>
+    <section className={`fc-card p-5 ${className}`}>
       {(title || right) && (
-        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          {title && <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-600">{title}</h2>}
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+          {title && <h2 className="fc-title text-[15px] font-semibold tracking-tight">{title}</h2>}
           {right}
         </div>
       )}
@@ -83,20 +77,23 @@ export function Card({ title, right, children, className = "" }: { title?: React
   );
 }
 
+/** Large-number tile; its edge takes the tone colour. Red tiles get a slow "live" pulse on the dot. */
 export function Tile({ label, value, sub, href, tone = "slate" }: { label: string; value: ReactNode; sub?: ReactNode; href?: string; tone?: Tone }) {
-  const accent: Record<Tone, string> = {
-    red: "border-l-red-500", amber: "border-l-amber-500", blue: "border-l-blue-500",
-    green: "border-l-emerald-500", slate: "border-l-slate-400", purple: "border-l-violet-500",
-  };
   const body = (
-    <div className={`h-full rounded-lg border border-l-4 border-slate-200 bg-white p-4 shadow-sm ${accent[tone]} ${href ? "transition hover:border-slate-300 hover:shadow" : ""}`}>
-      <div className="text-xs font-medium uppercase tracking-wide text-slate-500">{label}</div>
-      <div className="mt-1 text-2xl font-semibold text-slate-900">{value}</div>
-      {sub && <div className="mt-1 text-xs text-slate-500">{sub}</div>}
+    <div data-tone={tone} className="fc-tile h-full p-4">
+      <div className="fc-muted flex items-center justify-between gap-2 text-[12px] font-medium">
+        <span className="flex items-center gap-1.5">
+          <span aria-hidden="true" data-tone={tone} className={`fc-dot h-2 w-2 rounded-full ${tone === "red" ? "fc-pulse" : ""}`} />
+          {label}
+        </span>
+        {href && <span aria-hidden="true" className="opacity-60">›</span>}
+      </div>
+      <div className="fc-num mt-2 text-[28px] font-semibold leading-tight tracking-tight">{value}</div>
+      {sub && <div className="fc-muted mt-1 text-[12px]">{sub}</div>}
     </div>
   );
   return href ? (
-    <Link href={href} className="block rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
+    <Link href={href} className="block rounded-[18px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
       {body}
     </Link>
   ) : (
@@ -107,8 +104,8 @@ export function Tile({ label, value, sub, href, tone = "slate" }: { label: strin
 export function Fact({ label, value, warn = false }: { label: string; value: ReactNode; warn?: boolean }) {
   return (
     <div>
-      <dt className="text-xs text-slate-500">{label}</dt>
-      <dd className={`mt-0.5 text-sm font-medium ${warn ? "text-amber-800" : "text-slate-900"}`}>
+      <dt className="fc-muted text-[12px]">{label}</dt>
+      <dd className="mt-0.5 text-[14px] font-medium" data-tone={warn ? "amber" : undefined} style={warn ? { color: "var(--fg)" } : { color: "var(--fc-text)" }}>
         {warn && <span aria-hidden="true">⚠ </span>}
         {value}
       </dd>
@@ -118,8 +115,9 @@ export function Fact({ label, value, warn = false }: { label: string; value: Rea
 
 export function Notice({ tone = "amber", children }: { tone?: Tone; children: ReactNode }) {
   return (
-    <div role="status" className={`rounded-md border px-3 py-2 text-sm ${TONES[tone]}`}>
-      {children}
+    <div role="status" data-tone={tone} className="fc-notice flex items-start gap-2.5 px-4 py-3 text-[14px]">
+      <span aria-hidden="true" data-tone={tone} className="fc-dot mt-1.5 h-2 w-2 shrink-0 rounded-full" />
+      <div className="min-w-0">{children}</div>
     </div>
   );
 }
