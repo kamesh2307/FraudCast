@@ -1,8 +1,8 @@
 "use client";
-// Navigation: pill bar (light) / glowing underline on the active page (dark).
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Suspense } from "react";
 
 const NAV = [
   { href: "/", label: "Overview" },
@@ -15,21 +15,29 @@ const NAV = [
   { href: "/status", label: "Status" },
 ];
 
-export default function NavBar() {
-  const path = usePathname() ?? "/";
-  const active = (href: string) => (href === "/" ? path === "/" : path === href || path.startsWith(`${href}/`));
+function NavContent() {
+  const path = usePathname() || "/";
+
+  const active = (href: string) =>
+    href === "/"
+      ? path === "/"
+      : path === href || path.startsWith(`${href}/`);
+
   return (
     <nav aria-label="Main" className="max-w-full overflow-x-auto">
       <ul className="flex w-max items-center gap-0.5 rounded-full bg-black/[0.04] p-1">
         {NAV.map((n) => {
           const on = active(n.href);
+
           return (
             <li key={n.href}>
               <Link
                 href={n.href}
                 aria-current={on ? "page" : undefined}
                 className={`block whitespace-nowrap rounded-full px-3.5 py-1.5 text-[13px] font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
-                  on ? "fc-nav-active bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-900"
+                  on
+                    ? "fc-nav-active bg-white text-slate-900 shadow-sm"
+                    : "text-slate-500 hover:text-slate-900"
                 }`}
               >
                 {n.label}
@@ -39,5 +47,13 @@ export default function NavBar() {
         })}
       </ul>
     </nav>
+  );
+}
+
+export default function NavBar() {
+  return (
+    <Suspense fallback={null}>
+      <NavContent />
+    </Suspense>
   );
 }
